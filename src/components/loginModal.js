@@ -1,6 +1,9 @@
 import React from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-function loginModal({ displayModal, closeLoginModal }) {
+function loginModal({ displayModal, closeLoginModal,
+    email, handleEmailChange, password, handlePasswordChange, login }) {
+
+
     return (
         <div>
             <Modal show={displayModal} onHide={closeLoginModal}>
@@ -10,15 +13,16 @@ function loginModal({ displayModal, closeLoginModal }) {
                 <Form>
                     <Form.Group controlId="formBasicEmail">
                         <Form.Label>Email address</Form.Label>
-                        <Form.Control type="email" placeholder="Enter email" />
+                        <Form.Control type="email" maxLength={30} placeholder="Enter email" value={email} onChange={e => handleEmailChange(e.target.value)} />
                         <Form.Text className="text-muted">
                             We'll never share your email with anyone else.
     </Form.Text>
                     </Form.Group>
 
                     <Form.Group controlId="formBasicPassword">
-                        <Form.Label>Password</Form.Label>
-                        <Form.Control type="password" placeholder="Password" />
+                        <Form.Label>Password (Max 10 characters)</Form.Label>
+                        <Form.Control type="password" placeholder="Password" maxLength={10}
+                            value={password} onChange={e => handlePasswordChange(e.target.value)} />
                     </Form.Group>
 
 
@@ -27,8 +31,8 @@ function loginModal({ displayModal, closeLoginModal }) {
                     <Button variant="secondary" onClick={closeLoginModal}>
                         Close
           </Button>
-                    <Button variant="primary" onClick={closeLoginModal}>
-                        Save Changes
+                    <Button variant="primary" onClick={login}>
+                        Login
           </Button>
                 </Modal.Footer>
             </Modal>
