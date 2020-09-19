@@ -1,11 +1,15 @@
 import React from 'react';
-
-function moviescards() {
+import Cards from './cards';
+function moviescards({ movieList, displayName }) {
     return (
-        <div >
-            <h1>moviescards</h1>
+        <div style={{ display: 'flex', 'flexWrap': 'wrap' }}>
+            {
+                movieList.map(({ id, detail }) => (
+                    <Cards key={id} id={id} detail={detail} adminName={displayName}></Cards>
+                ))
+            }
+
         </div>
     );
 }
-
-export default moviescards;
+export default moviescards = React.memo(moviescards);

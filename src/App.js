@@ -10,9 +10,29 @@ import { db, auth } from './firebase';
 function App() {
   const [displayModal, setDisplayModal] = useState(false);
   const [email, setEmail] = useState("");
+  const [movieList, setMovieList] = useState([]);
   const [password, setPassword] = useState("");
   const [admin, setAdmin] = useState(null);
   const [displayName, setDisplayName] = useState("");
+  const [genreList, setGenreList] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [sortBy, setSortBy] = useState('99popularity');
+
+  useEffect(() => {
+    setLoading(true);
+    getSortedMovies("99popularity");
+  }, []);
+
+  useEffect(() => {
+    let array = [];
+    movieList.forEach(element => {
+      array = array.concat(element.detail.genre);
+    });
+    let uniqueGenreList = [...new Set(array)];
+    setGenreList(uniqueGenreList);
+    setLoading(false);
+  }, [movieList]);
+
 
   useEffect(() => {
     auth.onAuthStateChanged(function (authUser) {
@@ -20,10 +40,44 @@ function App() {
       if (admin) {
         var name = admin.email.split('@')[0];
         setDisplayName(name ? name : "");
+      } else {
+        setDisplayName("")
       }
     });
   }, [admin, displayName]);
 
+  const getSortedMovies = (newValue) => {
+    setSortBy(newValue);
+    setLoading(true);
+    setMovieList([]);
+
+    if (newValue === "name") {
+      db.collection('movies').orderBy('name', 'asc').onSnapshot(snap => {
+        assignMovies(snap)
+      });
+    }
+    else if (newValue === "director") {
+      console.log("director move")
+      db.collection('movies').orderBy('director', 'asc').onSnapshot(snap => {
+        assignMovies(snap)
+      });
+    }
+    else if (newValue === "99popularity") {
+      console.log("99popularity move")
+      db.collection('movies').orderBy('99popularity', 'desc').onSnapshot(snap => {
+        assignMovies(snap)
+      });
+    }
+  }
+
+  function assignMovies(snap) {
+    setMovieList(snap.docs.map(doc => (
+      {
+        id: doc.id,
+        detail: doc.data()
+      })
+    ))
+  }
 
   function handleEmailChange(newValue) {
     setEmail(newValue);
@@ -33,7 +87,6 @@ function App() {
   }
 
   function login() {
-    console.log(email, password);
     auth.signInWithEmailAndPassword(email, password)
       .catch(function (error) {
         alert(error.message);
@@ -47,6 +100,8 @@ function App() {
   }
 
   const showLoginModal = (event) => {
+    setEmail('');
+    setPassword('');
     event.preventDefault();
     setDisplayModal(true);
   }
@@ -57,14 +112,16 @@ function App() {
   }
 
   return (
-    <div>
+    <React.Fragment>
       <Navbar showLoginModal={showLoginModal} admin={admin} signout={signout} displayName={displayName}></Navbar>
-      <Searchbar></Searchbar>
-      <Moviescards></Moviescards>
+      {loading ? <p>loadingggggg</p> : <div>
+        <Searchbar sortBy={sortBy} retriveMovies={getSortedMovies}></Searchbar>
+        <Moviescards movieList={movieList} displayName={displayName}></Moviescards> </div>}
+
       <LoginModal displayModal={displayModal} closeLoginModal={closeLoginModal}
         email={email} handleEmailChange={handleEmailChange}
         password={password} handlePasswordChange={handlePasswordChange} login={login}></LoginModal>
-    </div>
+    </React.Fragment>
   );
 }
 

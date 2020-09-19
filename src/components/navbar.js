@@ -21,4 +21,5 @@ function navbar({ showLoginModal, admin, signout, displayName }) {
     );
 }
 
-export default navbar;
+export default navbar = React.memo(navbar);
+

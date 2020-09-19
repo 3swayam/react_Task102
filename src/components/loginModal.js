@@ -3,7 +3,6 @@ import { Modal, Button, Form } from 'react-bootstrap';
 function loginModal({ displayModal, closeLoginModal,
     email, handleEmailChange, password, handlePasswordChange, login }) {
 
-
     return (
         <div>
             <Modal show={displayModal} onHide={closeLoginModal}>
@@ -39,5 +38,4 @@ function loginModal({ displayModal, closeLoginModal,
         </div>
     );
 }
-
-export default loginModal;
+export default loginModal = React.memo(loginModal);
