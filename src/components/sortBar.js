@@ -1,7 +1,46 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Row, Col, Button, Form } from 'react-bootstrap';
 import Filterbar from './filterbar';
-function Sortbar({ genreList, addToFilterGenreList, selectedGenreList, removeFromFilterGenreList, setSearchText, searchByName }) {
+function Sortbar({ genreList, selectedGenreList, updateListOfGenres,
+    filterMoviesByGenre, setFilterdMovieList, filterdMovieList }) {
+    const [searchText, setSearchText] = useState('');
+    const addToFilterGenreList = (name) => {
+        let gList = Object.assign(genreList);
+        let selected = Object.assign(selectedGenreList);
+        var index = gList.findIndex(x => x === name);
+        if (index != -1) {
+            gList.splice(index, 1);
+            selected.push(name);
+        }
+        updateListOfGenres([].concat(selected), [].concat(gList))
+
+    }
+    const removeFromFilterGenreList = (name) => {
+        let gList = Object.assign(genreList);
+        let selected = Object.assign(selectedGenreList);
+        var index = selected.findIndex(x => x === name);
+        if (index != -1) {
+            selected.splice(index, 1);
+            gList.push(name);
+        }
+        updateListOfGenres([].concat(selected), [].concat(gList))
+    }
+    const searchByName = (event) => {
+        event.preventDefault();
+        let arr = [];
+        if (searchText) {
+            filterdMovieList.forEach(movie => {
+                if (movie.detail.name.toLowerCase().includes(searchText.toLowerCase()) ||
+                    movie.detail.director.toLowerCase().includes(searchText.toLowerCase())) {
+                    arr.push(movie);
+                }
+            });
+            setFilterdMovieList([].concat(arr));
+        }
+        else {
+            filterMoviesByGenre();
+        }
+    }
     return (
         <div>
             <Row>

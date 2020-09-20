@@ -1,7 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-function loginModal({ displayModal, closeLoginModal,
-    email, handleEmailChange, password, handlePasswordChange, login }) {
+import { auth } from '../firebase';
+function LoginModal({ displayModal, closeLoginModal }) {
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    function login() {
+        auth.signInWithEmailAndPassword(email, password)
+            .catch(function (error) {
+                alert(error.message);
+            });
+        setEmail('');
+        setPassword('');
+        closeLoginModal(false);
+    }
 
     return (
         <div>
@@ -12,7 +24,7 @@ function loginModal({ displayModal, closeLoginModal,
                 <Form>
                     <Form.Group controlId="formBasicEmail">
                         <Form.Label>Email address</Form.Label>
-                        <Form.Control type="email" maxLength={30} placeholder="Enter email" value={email} onChange={e => handleEmailChange(e.target.value)} />
+                        <Form.Control type="email" maxLength={30} placeholder="Enter email" value={email} onChange={e => setEmail(e.target.value)} />
                         <Form.Text className="text-muted">
                             We'll never share your email with anyone else.
     </Form.Text>
@@ -21,7 +33,7 @@ function loginModal({ displayModal, closeLoginModal,
                     <Form.Group controlId="formBasicPassword">
                         <Form.Label>Password (Max 10 characters)</Form.Label>
                         <Form.Control type="password" placeholder="Password" maxLength={10}
-                            value={password} onChange={e => handlePasswordChange(e.target.value)} />
+                            value={password} onChange={e => setPassword(e.target.value)} />
                     </Form.Group>
 
 
@@ -38,4 +50,4 @@ function loginModal({ displayModal, closeLoginModal,
         </div>
     );
 }
-export default loginModal;
+export default LoginModal;

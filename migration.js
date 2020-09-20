@@ -11,13 +11,12 @@ const firebaseApp = firebase.initializeApp({
     measurementId: "G-R71JNPNQ1J"
 });
 const db = firebaseApp.firestore();
-//console.log(movieList);
 function batchWrite() {
     var batch = db.batch();
 
     movieList.forEach((doc) => {
         doc.createdBy = "swayam"; doc.updatedBy = "swayam";
-        var docRef = db.collection("movies").doc(); //automatically generate unique id
+        var docRef = db.collection("movies").doc();
         batch.set(docRef, doc);
     });
     // Commit the batch
@@ -61,6 +60,6 @@ function deleteDoc() {
 
 //add();
 
-deleteDoc();
+//deleteDoc();
 
-//batchWrite();
+batchWrite();

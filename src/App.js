@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Form, Button } from 'react-bootstrap';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Navbar from './components/navbar';
@@ -8,82 +7,24 @@ import SortBar from './components/sortBar';
 import Moviescards from './components/moviescards';
 import LoginModal from './components/loginModal';
 import UpdateLogin from './components/updateModal';
-import Filterbar from './components/filterbar'
 import { db, auth } from './firebase';
-import list from './imdb.json';
 
 function App() {
 
-  const [searchText, setSearchText] = useState('');
+  const [sortBy, setSortBy] = useState('99popularity');
   const [displayModal, setDisplayModal] = useState(false);
-  const [email, setEmail] = useState("");
   const [movieList, setMovieList] = useState([]);
   const [filterdMovieList, setFilterdMovieList] = useState([]);
   const [selectedGenreList, setSelectedGenreList] = useState([]);
-  const [password, setPassword] = useState("");
   const [admin, setAdmin] = useState(null);
   const [displayName, setDisplayName] = useState("");
   const [genreList, setGenreList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [displayUpdateModal, setDisplayUpdateModal] = useState(false);
-  const [sortBy, setSortBy] = useState('99popularity');
+
 
   const [updateMovie, setUpdateMovie] = useState(null);
 
-
-  const fire = true;
-
-  useEffect(() => {
-    getSortedMovies("99popularity");
-  }, []);
-
-  const getSortedMovies = (newValue) => {
-    setSortBy(newValue);
-    setLoading(true);
-    if (fire) {
-      if (newValue === "name") {
-        db.collection('movies').orderBy('name', 'asc').onSnapshot(snap => {
-          assignMovies(snap)
-        });
-      }
-      else if (newValue === "director") {
-        db.collection('movies').orderBy('director', 'asc').onSnapshot(snap => {
-          assignMovies(snap)
-        });
-      }
-      else if (newValue === "99popularity") {
-        db.collection('movies').orderBy('99popularity', 'desc').onSnapshot(snap => {
-          assignMovies(snap)
-        });
-      }
-    } else {
-      nofirbase();
-    }
-  }
-
-  function assignMovies(snap) {
-    let Aaar = [];
-    snap.docs.forEach(doc => {
-      let obj = {
-        id: doc.id,
-        detail: doc.data()
-      }
-      Aaar.push(obj);
-    });
-    setMovieList([].concat(Aaar))
-  }
-
-  function nofirbase() {
-    let Aaar = [];
-    list.forEach(doc => {
-      let obj = {
-        id: doc.name,
-        detail: doc
-      }
-      Aaar.push(obj);
-    });
-    setMovieList([].concat(Aaar))
-  }
 
   const filterMoviesByGenre = () => {
     let listOfAllMovies = Object.assign(movieList);
@@ -103,25 +44,7 @@ function App() {
 
   useEffect(() => {
     filterMoviesByGenre();
-  }, [genreList, selectedGenreList, movieList]);
-
-  const searchByName = (event) => {
-    event.preventDefault();
-    let arr = [];
-    if (searchText) {
-      filterdMovieList.forEach(movie => {
-        if (movie.detail.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          movie.detail.director.toLowerCase().includes(searchText.toLowerCase())) {
-          arr.push(movie);
-        }
-      });
-      setFilterdMovieList([].concat(arr));
-    }
-
-    else {
-      filterMoviesByGenre();
-    }
-  }
+  }, [genreList, selectedGenreList]);
 
   useEffect(() => {
     let array = [];
@@ -132,6 +55,7 @@ function App() {
     setGenreList(uniqueGenreList);
     setSelectedGenreList([]);
     setLoading(false);
+    //filterMoviesByGenre();
   }, [movieList]);
 
   useEffect(() => {
@@ -146,35 +70,16 @@ function App() {
     });
   }, [admin, displayName]);
 
-  function handleEmailChange(newValue) {
-    setEmail(newValue);
-  }
-  function handlePasswordChange(newValue) {
-    setPassword(newValue);
-  }
-
-  function login() {
-    auth.signInWithEmailAndPassword(email, password)
-      .catch(function (error) {
-        alert(error.message);
-      });
-    setDisplayModal(false);
-  }
-
   function signout() {
     auth.signOut();
     setAdmin(null);
   }
 
   const showLoginModal = (event) => {
-    setEmail('');
-    setPassword('');
     event.preventDefault();
     setDisplayModal(true);
   }
   const closeLoginModal = (event) => {
-    setEmail('');
-    setPassword('');
     setDisplayModal(false);
   }
 
@@ -190,30 +95,6 @@ function App() {
     setDisplayUpdateModal(false);
     setUpdateMovie(null);
 
-  }
-
-  const addToFilterGenreList = (name) => {
-    let gList = Object.assign(genreList);
-    let selected = Object.assign(selectedGenreList);
-
-    var index = gList.findIndex(x => x === name);
-    if (index != -1) {
-      gList.splice(index, 1);
-      selected.push(name);
-    }
-    setSelectedGenreList([].concat(selected));
-    setGenreList([].concat(gList));
-  }
-  const removeFromFilterGenreList = (name) => {
-    let gList = Object.assign(genreList);
-    let selected = Object.assign(selectedGenreList);
-    var index = selected.findIndex(x => x === name);
-    if (index != -1) {
-      selected.splice(index, 1);
-      gList.push(name);
-    }
-    setSelectedGenreList([].concat(selected));
-    setGenreList([].concat(gList));
   }
 
   const updateMovieObj = (obj) => {
@@ -242,40 +123,60 @@ function App() {
       });
   }
 
+  function updateListOfGenres(list1, list2) {
+    setSelectedGenreList(list1);
+    setGenreList(list2);
+  }
+  useEffect(() => {
+    getSortedMovies(sortBy);
+  }, []);
+
+  const getSortedMovies = (newValue) => {
+    setSortBy(newValue);
+    setLoading(true);
+    if (newValue === "name") {
+      db.collection('movies').orderBy('name', 'asc').onSnapshot(snap => {
+        assignMovies(snap)
+      });
+    }
+    else if (newValue === "director") {
+      db.collection('movies').orderBy('director', 'asc').onSnapshot(snap => {
+        assignMovies(snap)
+      });
+    }
+    else if (newValue === "99popularity") {
+      db.collection('movies').orderBy('99popularity', 'desc').onSnapshot(snap => {
+        assignMovies(snap)
+      });
+    }
+  }
+  function assignMovies(snap) {
+    let Aaar = [];
+    snap.docs.forEach(doc => {
+      let obj = {
+        id: doc.id,
+        detail: doc.data()
+      }
+      Aaar.push(obj);
+    });
+    setMovieList([].concat(Aaar))
+  }
+
+
   return (
     <React.Fragment>
       <Navbar showLoginModal={showLoginModal} admin={admin} signout={signout} displayName={displayName}></Navbar>
       {loading ? <p>Movies Are loading</p> : <div>
-        <Searchbar sortBy={sortBy} retriveMovies={getSortedMovies}></Searchbar>
-
-        {/* <div>
-          <Row>
-            <Col style={{ border: "1px solid lightgrey" }}>
-              <span>Genres List </span>
-              <Filterbar genreList={genreList} updateGenreList={addToFilterGenreList}></Filterbar></Col>
-            <Col style={{ border: "1px solid lightgrey" }}><span>Filter Genres List</span><Filterbar genreList={selectedGenreList} updateGenreList={removeFromFilterGenreList}></Filterbar></Col>
-            <Col>
-              <Form>
-                <Form.Group controlId="formBasicEmail">
-                  <Form.Label>Search By name</Form.Label>
-                  <Form.Control type="text" placeholder="Enter Text" onChange={(e) => setSearchText(e.target.value)} />
-
-                </Form.Group>
-                <Button variant="primary" type="submit" onClick={(e) => { searchByName(e) }}>
-                  Search
-  </Button>
-              </Form>
-            </Col>
-          </Row>
-        </div> */}
-        <SortBar genreList={genreList} addToFilterGenreList={addToFilterGenreList}
-          selectedGenreList={selectedGenreList} removeFromFilterGenreList={removeFromFilterGenreList}
-          setSearchText={setSearchText} searchByName={searchByName}></SortBar>
+        <Searchbar sortBy={sortBy} getSortedMovies={getSortedMovies}></Searchbar>
+        <SortBar genreList={genreList}
+          selectedGenreList={selectedGenreList} updateListOfGenres={updateListOfGenres}
+          filterMoviesByGenre={filterMoviesByGenre} setFilterdMovieList={setFilterdMovieList}
+          filterdMovieList={filterdMovieList}
+        ></SortBar>
         <Moviescards movieList={filterdMovieList} displayName={displayName} editMovie={editMovie}></Moviescards> </div>}
 
       <LoginModal displayModal={displayModal} closeLoginModal={closeLoginModal}
-        email={email} handleEmailChange={handleEmailChange}
-        password={password} handlePasswordChange={handlePasswordChange} login={login}></LoginModal>
+      ></LoginModal>
 
       {displayUpdateModal ?
         <UpdateLogin displayUpdateModal={displayUpdateModal}
