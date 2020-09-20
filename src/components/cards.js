@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Button } from 'react-bootstrap';
-function cards({ id, detail, adminName }) {
+function cards({ id, detail, adminName, editMovie }) {
     return (
         <div>
             <Card key={id}
@@ -9,7 +9,7 @@ function cards({ id, detail, adminName }) {
                 className="mb-2" >
                 <Card.Header style={{ color: "#000", display: "flex", justifyContent: 'space-around' }}>
                     <Card.Title>{detail.name}</Card.Title>
-                    {adminName ? <Button>edit</Button> : <span></span>}</Card.Header>
+                    {adminName ? <Button onClick={e => editMovie(id, detail)}>edit</Button> : <span></span>}</Card.Header>
                 <Card.Body style={{ color: "#000" }}>
                     <Card.Title>{detail.director}</Card.Title>
                     <Card.Text>
@@ -30,4 +30,4 @@ function cards({ id, detail, adminName }) {
     );
 }
 
-export default cards = React.memo(cards);
+export default cards;

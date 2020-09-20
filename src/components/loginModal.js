@@ -38,4 +38,4 @@ function loginModal({ displayModal, closeLoginModal,
         </div>
     );
 }
-export default loginModal = React.memo(loginModal);
+export default loginModal;

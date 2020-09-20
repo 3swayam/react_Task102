@@ -1,14 +1,14 @@
 import firebase from "firebase";
 
 const firebaseApp = firebase.initializeApp({
-    apiKey: "AIzaSyDYM4z1pVNeINnbww6WdtYTk4t3ryFp6EE",
-    authDomain: "reacttask102.firebaseapp.com",
-    databaseURL: "https://reacttask102.firebaseio.com",
-    projectId: "reacttask102",
-    storageBucket: "reacttask102.appspot.com",
-    messagingSenderId: "821366528487",
-    appId: "1:821366528487:web:19b016c585b1271a134542",
-    measurementId: "G-XF4PYVHWSF"
+    apiKey: "AIzaSyAP7mKSFZ0WeuC7e9fMiuegj__bN5dN1tc",
+    authDomain: "reactmovie102.firebaseapp.com",
+    databaseURL: "https://reactmovie102.firebaseio.com",
+    projectId: "reactmovie102",
+    storageBucket: "reactmovie102.appspot.com",
+    messagingSenderId: "503008017111",
+    appId: "1:503008017111:web:8644dcf17f73e8945ece92",
+    measurementId: "G-R71JNPNQ1J"
 });
 
 const db = firebaseApp.firestore();
