@@ -9,7 +9,6 @@ function navbar({ showLoginModal, admin, signout, displayName }) {
                         <InputGroup.Prepend>
                             <InputGroup.Text id="basic-addon1">Movie Mania </InputGroup.Text>
                         </InputGroup.Prepend>
-
                     </InputGroup>
                 </Form>
                 <Form inline>

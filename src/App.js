@@ -4,6 +4,7 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Navbar from './components/navbar';
 import Searchbar from './components/searchbar';
+import SortBar from './components/sortBar';
 import Moviescards from './components/moviescards';
 import LoginModal from './components/loginModal';
 import UpdateLogin from './components/updateModal';
@@ -37,11 +38,9 @@ function App() {
   }, []);
 
   const getSortedMovies = (newValue) => {
-    console.log("getSortedMovies")
     setSortBy(newValue);
     setLoading(true);
     if (fire) {
-      console.log("calling db")
       if (newValue === "name") {
         db.collection('movies').orderBy('name', 'asc').onSnapshot(snap => {
           assignMovies(snap)
@@ -58,7 +57,6 @@ function App() {
         });
       }
     } else {
-      console.log("firebase call")
       nofirbase();
     }
   }
@@ -181,7 +179,6 @@ function App() {
   }
 
   function editMovie(id, detail) {
-    console.log(id, detail)
     setUpdateMovie({
       id: id,
       detail: detail
@@ -227,7 +224,6 @@ function App() {
       "imdb_score": obj.imdb,
       "updatedBy": displayName
     }).then(function () {
-      console.log("Document successfully updated!");
       let movies = Object.assign(movieList);
       movies.forEach(element => {
         if (element.id == obj.id) {
@@ -246,14 +242,13 @@ function App() {
       });
   }
 
-
   return (
     <React.Fragment>
       <Navbar showLoginModal={showLoginModal} admin={admin} signout={signout} displayName={displayName}></Navbar>
-      {loading ? <p>loadingggggg</p> : <div>
+      {loading ? <p>Movies Are loading</p> : <div>
         <Searchbar sortBy={sortBy} retriveMovies={getSortedMovies}></Searchbar>
 
-        <div>
+        {/* <div>
           <Row>
             <Col style={{ border: "1px solid lightgrey" }}>
               <span>Genres List </span>
@@ -272,7 +267,10 @@ function App() {
               </Form>
             </Col>
           </Row>
-        </div>
+        </div> */}
+        <SortBar genreList={genreList} addToFilterGenreList={addToFilterGenreList}
+          selectedGenreList={selectedGenreList} removeFromFilterGenreList={removeFromFilterGenreList}
+          setSearchText={setSearchText} searchByName={searchByName}></SortBar>
         <Moviescards movieList={filterdMovieList} displayName={displayName} editMovie={editMovie}></Moviescards> </div>}
 
       <LoginModal displayModal={displayModal} closeLoginModal={closeLoginModal}
