@@ -10,7 +10,7 @@ import UpdateLogin from './components/updateModal';
 import { db, auth } from './firebase';
 
 function App() {
-  //get movies on priority
+
   const [sortBy, setSortBy] = useState('99popularity');
   const [displayModal, setDisplayModal] = useState(false);
   const [movieList, setMovieList] = useState([]);
